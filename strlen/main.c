@@ -7,8 +7,7 @@ unsigned long long strlen (const char str[]);
 int main ()
 {
     char *str;
-    char c;
-    int i = 0;
+
     gets (str);
 
     printf ("size str = %llu\n", strlen(str));
