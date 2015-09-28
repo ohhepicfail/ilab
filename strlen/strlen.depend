@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1443464047 source:c:\users\ÅæèÊâÓäàğÅ\desktop\ilab\strlen\main.c
+	<stdio.h>
+	<stdlib.h>
+	<assert.h>
+

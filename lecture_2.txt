@@ -1,0 +1,137 @@
+Даны два массива. Нужно в третий массив записать попарную сумму элементов
+
+Проектирование сверху вниз - начинаем с main, как будто все остальное уже готово.
+
+void sum_1 ( int res[], const int a[], const int b[], int size);
+int *sum_2 (int res[], const int a[], const int b[], int size); 
+
+int main()
+{
+	const int size = 10;
+	int a[size] = {}, b[size] = {};
+	
+	Input ("a", a, size); 		// как будто уже есть
+	Input ("b", b, size);
+	
+	int c[size] = {};
+	
+	sum_1 (c, a, b, size); 		// 1 var c = a + b сохраняем а
+								// sum (a, a, b, size);
+	sum (a, b, size); 	   		// 2 var теряем а, но экономим память
+	int *c = sum (a, b, size);
+	
+	mul (sum (res, a, b, size), 2); 	// часто бывает неудобно, когда функция не содержит
+										//возвращаемого значения
+									
+	sum_2 (c, a, b, size);
+	
+	int *res = sum_2(res, a, b, size); 	/* what? создается переменная-адрес, но память под сам элемент не выделена. У переменной мусорное значение(инициализация не завершена). Передаем мусор в sum(). Функция считает, что это самый обычный массив, от рандомного адреса отсчитывается адреса и записывает в них значения. Разве стоит продолжать?*/	
+	
+	int *res = sum_3 (a, b, size); // а кто будет отвечать за хранение результата?
+	
+	int *sum_4 (a[], b[], size);
+} 
+
+void sum_1 ( int res[], const int a[], const int b[], int size) // int *res можно сдигать
+{																//указатель(res++)
+	int i;													// int res[] == const int * const res
+	for (i = 0; i < size; i++)
+		res[i] = a[i] + b[i];
+}
+
+int *sum_2 (int res[], const int a[], const int b[], int size) // если входные данные не
+{															   //продразумевают изменения, то
+	int i; 													   //желательно делать их const
+	//проверим указатели
+	assert (res);
+	assert (a);
+	assert (b);
+	// size сделаем size_t or assert (size > 0)
+	// assert (res == b) на a не нужно, потому что sum_2 (a, a, b, size); why not?
+	for (i = 0; i < size; i++)
+		// assert (0 <= i && i < size)
+		// assert (0 <= i + 1 && i + 1 < size);
+		res[i] = a[i] + b[i];
+	
+	return res;						// вот так гораздо удобнее (см пример в main mul())
+}
+
+int *sum_3 (const int a[], const int b[], int size) // если входные данные не
+{															   //продразумевают изменения, то
+	int i;  												   //желательно делать их const
+	int res[size]; // см. около return ;)
+			//проверим указатели
+	assert (res);
+	assert (a);
+	assert (b);
+			// size сделаем size_t or assert (size > 0)
+			// assert (res == b) на a не нужно, потому что sum_2 (a, a, b, size); why not?
+	for (i = 0; i < size; i++)
+				// assert (0 <= i && i < size)
+				// assert (0 <= i + 1 && i + 1 < size);
+		res[i + 1] = a[i] + b[i]; 
+	
+	return res;						// вернет адрес памяти, которая уже убрана из стека. Решение
+									//- выделять память не в стеке. static int res[size]; НО //массив произвольного массива не прокатит. Но решение совсем
+									//так себе. см ниже.
+}
+
+Практика программирования Керниган и Пайк  ------------ читать! 
+
+Наличие возвращаемого значения в С ни к чему не обязывает. 
+
+Контрактное программирование.Давайте без навязывания услуг. Маляр-штукатур или маляр + штукатур?
+
+const int i = 0;
+*(int *) &i = 2; // даешь перезапись констант
+
+Проблема static
+Посчитаем сумму два раза 
+int *res1 = sum_3 (a, a, size);
+int *res2 = sum_3 (b, b, size);
+int *res3 = sum_3 (res1, res2, size); // result - 4b :(
+Доска в аудитории - static. Проектор - локальная переманная. 
+
+снятие радиатора intel and amd
+
+еще вариант sum
+
+int *sum_4 (const int a[], const int b[], int size)
+{
+	int i;  												   //желательно делать их const
+	int *res = (int*) calloc (size, sizeof (res[0]); 	//malloc не используем
+	assert (res);
+			//проверим указатели
+	assert (res);
+	assert (a);
+	assert (b);
+			// size сделаем size_t or assert (size > 0)
+			// assert (res == b) на a не нужно, потому что sum_2 (a, a, b, size); why not?
+	for (i = 0; i < size; i++)
+				// assert (0 <= i && i < size)
+				// assert (0 <= i + 1 && i + 1 < size);
+		res[i + 1] = a[i] + b[i]; 
+	
+	return res;
+}
+а лучше назвать так int *CreateNewSumPleaseFreeMeLater(...){}
+
+Координация vk.com/thrsz
+
+на дом написать:
+strlen
+strcat
+strstr
+strtoul
+strtod
+strtok* по желанию
+msvcrt.dll
+src VS
+
+
+
+
+
+
+
+
