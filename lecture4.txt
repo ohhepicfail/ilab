@@ -1,0 +1,112 @@
+struct Vector_t
+{
+	int init;			// ??
+	double x,y;           // + functions
+	double angle, len;
+}
+
+void Vector_ctor (Vector_t *This, double x, double y) 	  // ctor -- constructor
+{
+	assert (This);
+	This -> x = x;		// == (*This).x = x;
+	This -> y = y;
+	This -> angle = blabla;
+	This -> len = blablabla;
+	This -> init = 1;
+}
+
+void Vector_dtor (const Vector_t *This)
+{
+	// залить ядом.
+	This -> ... = ...;
+	// сбросить const
+	((Vector_t *)This) -> x = ...;
+}
+
+bool Vector_ok (const Vector *This)
+{
+	return This && \
+	This -> init && \
+	This -> x == This -> len * cos (This -> a)...\    // it's bad, use DBL_EPSILON
+	...
+}
+
+int Vector_dump (const Vector *This, const char *name ? )
+{
+	printf ();
+	return 0;
+}
+
+Vector_t Vector_plus (const Vector_t *a, const Vector_t *b)
+{
+	if (! Vector_ok (a))
+	{
+		Vector_dump (a, "a");
+		assert ("All gone Bad with Vector a");
+	}
+	if (! Vector_ok (b))
+	{
+		Vector_dump (b, "b");
+		assert ("All gone Bad with Vector b");
+	}
+	
+	Vector_t res = {};
+	Vector_ctor (&res, a -> x, a -> y);
+	res.x += b -> x;
+	res.y += b -> y;
+	res.len = ...;
+	res.angle = ...;
+	
+	assert (Vector_ok (a));
+	assert (Vector_ok (b));
+	assert (Vector_ok (&res));
+	return res;
+}
+
+int main ()
+{
+	Vector_t  v = {1, 0},
+			 v2 = {};
+	Vector_ctor (&v2, 2, 3);
+}
+
+//------------------------
+#define NULL 0
+void NULL () {} --> void 0 () {} // it's bad  g++ -E > 1.out  сделает только макроподстановки
+
+#define FUNC( x, y, z)  //without space after function name! But in bracets we can use spaces. 
+
+
+#define SQR( x )	x * x	// BUT if we use for example x = 2+3 in result we see 2 + 3 * 2 + 3. Oh my god :( Must have ((x) * (x))!
+#define SQR( x ) ((x) * (x))	// if we use x++ -> ((x++) * (x++)) oooh
+C++11 #define SQR( x )	({auto _x = (x); _x * _x})	// street magic o_0
+
+Warning: back slash in the end of comment is BACK SLASH!
+
+Why we use #define?
+#ifdef DEBUG 	// or #ifndef  NDEBUG
+#define ASSERT_OK( type, var ) 	   		   				   \
+	(! type ## _ok (var) ?	   	   		   				   \
+	(							   		  				   \
+		type ## _dump (var, #var); 		  				   \
+		// assert (!"all..." #type " " #var);			   \ // ! because const string has no NULL adress
+		fprintf (stderr, "all gone bad,..." #type " " #var \
+		"file %s, line %d\n", __FILE__,  __LINE__); 	   \
+		abort ();										   \
+	)													   \
+	:													   \
+	(1)													   // return 1 if all good
+					
+#else
+#define ASSERT_OK( type, var )	; 
+#endif
+
+					// redirect strerr from console to file   onegin > o.txt
+					// make define from cmd		g++ 1.cpp -DDEBUG
+
+inline int sqr (int x){	return x * x;}
+
+int main ()
+{
+	int y = sqr (5), z = sqr (2 + 3);
+}
