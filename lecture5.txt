@@ -1,0 +1,16 @@
+в массивах выравнивания нет, в структурах есть.  
+
+erath[val / 32] & (1 << (val % 32))
+
+#pragma
+...attribute...((..))
+ 
+ __PRETTY_FUNCTION__
+ 
+sysinternals.com  process exployer
+
+ внутренне устройство win2000
+ 
+ atom
+ 
+ 0xBADFOOD
